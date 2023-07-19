@@ -1,9 +1,9 @@
 <template>
    <div class="main">
       <div class="toolbar">
-         <div class="btn-exit" v-on:click="() => start()">
+         <button class="btn-exit" v-on:click="() => exit()">
             <img alt="exit" src="../assets/exit.svg" />
-         </div>
+         </button>
       </div>
       <div class="dice-grid" :class="`${boardStatus.canPick(false) ? '' : 'grid-disabled'}`">
          <div v-for="(dice, i) in pools.private" :key="i" v-on:click="() => pick(i, false)">
@@ -20,19 +20,20 @@
             <dice :dice="dice" />
          </div>
       </div>
-      <div class="toolbar">
-         <div class="btn-yes" v-on:click="() => nextRound()" v-if="boardStatus.actions.length === 4">
+      <div class="toolbar" v-if="!gameWon">
+         <button class="btn-yes" v-on:click="() => nextRound()" v-if="boardStatus.actions.length === 4">
             <img src="../assets/confirm.svg" alt="confirm" />
-         </div>
-         <div class="btn-no" v-on:click="() => undo()" v-if="boardStatus.actions.length > 0">
+         </button>
+         <button class="btn-no" v-on:click="() => undo()" v-if="boardStatus.actions.length > 0">
             <img src="../assets/undo.svg" alt="undo" />
-         </div>
+         </button>
       </div>
    </div>
+   <div v-if="gameWon" class="game-over">Board completed!</div>
 </template>
 
 <script setup lang="ts">
-import { defineProps, reactive } from 'vue';
+import { defineProps, defineEmits, reactive } from 'vue';
 import BoardStatus from './board-status';
 import DiceManager from './dice.manager';
 import DiceModel from './dice.model';
@@ -41,9 +42,9 @@ import Dice from './dice.vue';
 import PlacementManager from './placement.manager';
 import PoolsModel from './pools.model';
 
-let round = 0;
-const maxRound = 10;
+let gameWon = false;
 
+const emit = defineEmits(['onEnd']);
 const props = defineProps<{ map: number[] }>();
 const diceManager = new DiceManager();
 const placementManager = new PlacementManager();
@@ -57,11 +58,13 @@ const start = () => {
    pools.central = props.map.map((x) => new DiceModel(x));
    pools.private = bag.splice(0, 10).map((x) => new DiceModel(x, true));
    nextRound();
+   gameWon = false;
 };
+
+const exit = () => emit('onEnd');
 
 const nextRound = () => {
    pools.public = bag.splice(0, 3).map((x) => new DiceModel(x, true));
-   round++;
    boardStatus.mode = 'pick';
    boardStatus.actions = [];
 };
@@ -89,6 +92,7 @@ const place = (num: number) => {
    newDice.type = DiceType.Empty;
    placementManager.clearActive(pools.central);
    boardStatus.mode = 'pick';
+   if (pools.central.every((x) => x.placed)) gameWon = true;
 };
 
 const undo = () => {
