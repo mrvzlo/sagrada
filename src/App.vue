@@ -9,6 +9,20 @@
       <button v-on:click="pickRandom(easy)">Easy</button>
       <button v-on:click="pickRandom(medium)">Medium</button>
       <button v-on:click="pickRandom(hard)">Hard</button>
+
+      <hr />
+      <button v-on:click="showRules.value = !showRules.value">Show rules</button>
+      <div class="rules" v-if="showRules.value">
+         <div>In the center you have a board plan with 20 slots</div>
+         <div>Each round you pick one dice from the top pool and one from the bottom</div>
+         <div>You can cancel your turn before both dice are placed</div>
+         <div>Top pool is rolled once and will be unchanged since the game start</div>
+         <div>Bottom pool changes every round</div>
+         <div>If slot an a board has color, it means you can place only dice with the same color</div>
+         <div>If slot an a board has dots, it means you can place only dice with the same amount of dots</div>
+         <div>You cant place dice near another dice with the same color or with the same amount of dots</div>
+         <div>If you cant place any dice - use lose | If your board is full - you win</div>
+      </div>
    </div>
    <Grid v-if="map.dice.length" :map="map.dice" @on-end="clear" />
 </template>
@@ -18,7 +32,7 @@ import { reactive } from 'vue';
 import DiceManager from './components/dice.manager';
 import Grid from './components/grid.vue';
 
-const manager = new DiceManager();
+let showRules = reactive({ value: false });
 let map: { dice: number[] } = reactive({ dice: [] });
 
 const easy = [
@@ -52,7 +66,7 @@ const hard = [
 
 const pickRandom = (list: number[][]) => pickMap(list[Math.floor(Math.random() * list.length)]);
 
-const pickMap = (newMap: number[]) => (map.dice = manager.shuffleMap(newMap));
+const pickMap = (newMap: number[]) => (map.dice = new DiceManager().shuffleMap(newMap));
 
 const clear = () => {
    map.dice = [];

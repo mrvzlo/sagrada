@@ -35,6 +35,7 @@
 <script setup lang="ts">
 import { defineProps, defineEmits, reactive } from 'vue';
 import BoardStatus from './board-status';
+import CookieManager from './cookie-manager';
 import DiceManager from './dice.manager';
 import DiceModel from './dice.model';
 import { DiceType } from './dice.type';
@@ -48,10 +49,12 @@ const emit = defineEmits(['onEnd']);
 const props = defineProps<{ map: number[] }>();
 const diceManager = new DiceManager();
 const placementManager = new PlacementManager();
+const cookieManager = new CookieManager();
 
 let bag: number[] = [];
 const pools = reactive(new PoolsModel());
 const boardStatus = reactive(new BoardStatus());
+let showTutorial = false;
 
 const start = () => {
    bag = diceManager.generateBag();
@@ -59,6 +62,11 @@ const start = () => {
    pools.private = bag.splice(0, 10).map((x) => new DiceModel(x, true));
    nextRound();
    gameWon = false;
+
+   if (!cookieManager.getCookie('show-tutorial')) {
+      showTutorial = true;
+      cookieManager.setCookie('show-tutorial', 'true', 7);
+   }
 };
 
 const exit = () => emit('onEnd');
