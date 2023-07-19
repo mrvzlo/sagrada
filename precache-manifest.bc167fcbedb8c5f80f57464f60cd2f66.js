@@ -1,5 +1,9 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
+    "revision": "5181900752b6c3b70fba572cd0e95f6e",
+    "url": "/torre-di-vetro/_config.yml"
+  },
+  {
     "revision": "7c609c2213eea15c793f",
     "url": "/torre-di-vetro/css/app.d7cbe473.css"
   },
