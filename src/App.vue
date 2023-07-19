@@ -1,27 +1,15 @@
+<style lang="scss">
+@import '@/assets/main.scss';
+</style>
+
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
+   <Grid :map="map" />
 </template>
 
-<script lang="ts">
-import { Options, Vue } from "vue-class-component";
-import HelloWorld from "./components/HelloWorld.vue";
+<script setup lang="ts">
+import DiceManager from './components/dice.manager';
+import Grid from './components/grid.vue';
 
-@Options({
-  components: {
-    HelloWorld,
-  },
-})
-export default class App extends Vue {}
+const manager = new DiceManager();
+const map = manager.shuffleMap([256, 128, 16, 64, 1024, 32, 2, 1, 4, 256, 0, 64, 8, 128, 0, 0, 0, 512, 0, 0]);
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
