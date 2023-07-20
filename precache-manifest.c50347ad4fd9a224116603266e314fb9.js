@@ -4,8 +4,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/torre-di-vetro/_config.yml"
   },
   {
-    "revision": "340df36d0bb0c0d74af7",
-    "url": "/torre-di-vetro/css/app.c00b5cbc.css"
+    "revision": "391a93e5bcab2f2c48de",
+    "url": "/torre-di-vetro/css/app.0e8465c4.css"
   },
   {
     "revision": "84f13676d60e93dccd80ff2320962783",
@@ -20,12 +20,12 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/torre-di-vetro/img/undo.313309a4.svg"
   },
   {
-    "revision": "919969f9ffbbfad9390d2234e9c832c9",
+    "revision": "dd453651d04fb25ca7a3be892e2666b2",
     "url": "/torre-di-vetro/index.html"
   },
   {
-    "revision": "340df36d0bb0c0d74af7",
-    "url": "/torre-di-vetro/js/app.6c56fc04.js"
+    "revision": "391a93e5bcab2f2c48de",
+    "url": "/torre-di-vetro/js/app.80044d47.js"
   },
   {
     "revision": "cc99dd7315fa4f84e4a5",
