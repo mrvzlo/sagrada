@@ -1,33 +1,26 @@
 <template>
-   <div class="main">
-      <div class="toolbar">
-         <button class="btn-exit" v-on:click="() => exit()">
-            <img alt="exit" src="../assets/exit.svg" />
-         </button>
+   <div class="dice-grid" :class="`${boardStatus.canPick(false) ? '' : 'grid-disabled'}`">
+      <div v-for="(dice, i) in pools.private" :key="i" v-on:click="() => pick(i, false)">
+         <dice :dice="dice" />
       </div>
-      <div class="dice-grid" :class="`${boardStatus.canPick(false) ? '' : 'grid-disabled'}`">
-         <div v-for="(dice, i) in pools.private" :key="i" v-on:click="() => pick(i, false)">
-            <dice :dice="dice" />
-         </div>
+   </div>
+   <div class="dice-grid board">
+      <div v-for="(dice, i) in pools.central" :key="i" v-on:click="() => place(i)">
+         <dice :dice="dice" />
       </div>
-      <div class="dice-grid board">
-         <div v-for="(dice, i) in pools.central" :key="i" v-on:click="() => place(i)">
-            <dice :dice="dice" />
-         </div>
+   </div>
+   <div class="dice-grid" :class="`${boardStatus.canPick(true) ? '' : 'grid-disabled'}`">
+      <div v-for="(dice, i) in pools.public" :key="i" v-on:click="() => pick(i, true)">
+         <dice :dice="dice" />
       </div>
-      <div class="dice-grid" :class="`${boardStatus.canPick(true) ? '' : 'grid-disabled'}`">
-         <div v-for="(dice, i) in pools.public" :key="i" v-on:click="() => pick(i, true)">
-            <dice :dice="dice" />
-         </div>
-      </div>
-      <div class="toolbar" v-if="!gameWon">
-         <button class="btn-yes" v-on:click="() => nextRound()" v-if="boardStatus.actions.length === 4">
-            <img src="../assets/confirm.svg" alt="confirm" />
-         </button>
-         <button class="btn-no" v-on:click="() => undo()" v-if="boardStatus.actions.length > 0">
-            <img src="../assets/undo.svg" alt="undo" />
-         </button>
-      </div>
+   </div>
+   <div class="toolbar" v-if="!gameWon">
+      <button class="btn-yes" v-on:click="() => nextRound()" v-if="boardStatus.actions.length === 4">
+         <img src="../assets/confirm.svg" alt="confirm" />
+      </button>
+      <button class="btn-no" v-on:click="() => undo()" v-if="boardStatus.actions.length > 0">
+         <img src="../assets/undo.svg" alt="undo" />
+      </button>
    </div>
    <div v-if="gameWon" class="game-over">Board completed!</div>
 </template>
@@ -68,8 +61,6 @@ const start = () => {
       cookieManager.setCookie('show-tutorial', 'true', 7);
    }
 };
-
-const exit = () => emit('onEnd');
 
 const nextRound = () => {
    pools.public = bag.splice(0, 3).map((x) => new DiceModel(x, true));

@@ -3,37 +3,51 @@
 </style>
 
 <template>
-   <div v-if="!map.dice.length" class="menu">
-      <h1>Torre di Verto</h1>
-      <h3>Choose your difficulty level</h3>
-      <button v-on:click="pickRandom(easy)">Easy</button>
-      <button v-on:click="pickRandom(medium)">Medium</button>
-      <button v-on:click="pickRandom(hard)">Hard</button>
+   <div class="main">
+      <div class="toolbar">
+         <button class="btn-lang" v-on:click="() => toggleLocale()">
+            {{ localeName() }}
+         </button>
+         <button class="btn-exit" v-on:click="() => clear()" v-if="map.dice.length">
+            <img alt="exit" src="./assets/exit.svg" />
+         </button>
+      </div>
+      <Grid :map="map.dice" v-if="map.dice.length" />
 
-      <hr />
-      <button v-on:click="showRules.value = !showRules.value">Show rules</button>
-      <div class="rules" v-if="showRules.value">
-         <div>In the center you have a board plan with 20 slots</div>
-         <div>Each round you pick one dice from the top pool and one from the bottom</div>
-         <div>You can cancel your turn before both dice are placed</div>
-         <div>Top pool is rolled once and will be unchanged since the game start</div>
-         <div>Bottom pool changes every round</div>
-         <div>If slot an a board has color, it means you can place only dice with the same color</div>
-         <div>If slot an a board has dots, it means you can place only dice with the same amount of dots</div>
-         <div>You cant place dice near another dice with the same color or with the same amount of dots</div>
-         <div>If you cant place any dice - use lose | If your board is full - you win</div>
+      <div v-if="!map.dice.length" class="menu">
+         <h1>{{ $t('title') }}</h1>
+         <h3>{{ $t('choose') }}</h3>
+         <button v-on:click="pickRandom(easy)">{{ $t('easy') }}</button>
+         <button v-on:click="pickRandom(medium)">{{ $t('medium') }}</button>
+         <button v-on:click="pickRandom(hard)">{{ $t('hard') }}</button>
+
+         <hr />
+         <button v-on:click="showRules.value = !showRules.value">{{ $t('rules-btn') }}</button>
+         <div class="rules" v-if="showRules.value">
+            <div>In the center you have a board plan with 20 slots</div>
+            <div>Each round you pick one dice from the top pool and one from the bottom</div>
+            <div>You can cancel your turn before both dice are placed</div>
+            <div>Top pool is rolled once and will be unchanged since the game start</div>
+            <div>Bottom pool changes every round</div>
+            <div>If slot an a board has color, it means you can place only dice with the same color</div>
+            <div>If slot an a board has dots, it means you can place only dice with the same amount of dots</div>
+            <div>You cant place dice near another dice with the same color or with the same amount of dots</div>
+            <div>If you cant place any dice - use lose | If your board is full - you win</div>
+         </div>
       </div>
    </div>
-   <Grid v-if="map.dice.length" :map="map.dice" @on-end="clear" />
 </template>
 
 <script setup lang="ts">
 import { reactive } from 'vue';
 import DiceManager from './components/dice.manager';
 import Grid from './components/grid.vue';
+import LocaleManager from './components/locale.manager';
 
 let showRules = reactive({ value: false });
 let map: { dice: number[] } = reactive({ dice: [] });
+let currentLocal = '';
+const localeManager = new LocaleManager();
 
 const easy = [
    [0, 0, 0, 0, 0, 1, 0, 2, 0, 4, 0, 2, 0, 4, 0, 0, 0, 0, 0, 0],
@@ -68,7 +82,7 @@ const pickRandom = (list: number[][]) => pickMap(list[Math.floor(Math.random() *
 
 const pickMap = (newMap: number[]) => (map.dice = new DiceManager().shuffleMap(newMap));
 
-const clear = () => {
-   map.dice = [];
-};
+const clear = () => (map.dice = []);
+const toggleLocale = () => localeManager.toggleLocale();
+const localeName = () => localeManager.nextLocaleNativeName();
 </script>
