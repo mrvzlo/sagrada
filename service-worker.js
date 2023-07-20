@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/torre-di-vetro/precache-manifest.c21ce20a890d9674eaec342adcc6e0b8.js"
+  "/torre-di-vetro/precache-manifest.221b2b2537051651b7b97ad420618f30.js"
 );
 
 workbox.core.setCacheNameDetails({prefix: "torre-di-vetro"});
