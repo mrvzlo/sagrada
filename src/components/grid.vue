@@ -1,20 +1,21 @@
 <template>
+   <button class="btn-help" v-on:click="startTutorial">&nbsp;❔&nbsp;</button>
    <div class="dice-grid" :class="`${boardStatus.canPick(false) ? '' : 'grid-disabled'}`">
-      <div v-for="(dice, i) in pools.private" :key="i" v-on:click="() => pick(i, false)">
+      <div v-for="(dice, i) in pools.private" :key="i" v-on:mousedown="() => pick(i, false)">
          <dice :dice="dice" />
       </div>
    </div>
    <div class="dice-grid board">
-      <div v-for="(dice, i) in pools.central" :key="i" v-on:click="() => place(i)">
+      <div v-for="(dice, i) in pools.central" :key="i" v-on:mousedown="() => place(i)">
          <dice :dice="dice" />
       </div>
    </div>
    <div class="dice-grid" :class="`${boardStatus.canPick(true) ? '' : 'grid-disabled'}`">
-      <div v-for="(dice, i) in pools.public" :key="i" v-on:click="() => pick(i, true)">
+      <div v-for="(dice, i) in pools.public" :key="i" v-on:mousedown="() => pick(i, true)">
          <dice :dice="dice" />
       </div>
    </div>
-   <div class="toolbar" v-if="!gameWon">
+   <div class="toolbar" :class="gameWon ? 'hidden' : ''">
       <button class="btn-yes" v-on:click="() => nextRound()" v-if="boardStatus.actions.length === 4">
          <img src="../assets/confirm.svg" alt="confirm" />
       </button>
@@ -22,7 +23,23 @@
          <img src="../assets/undo.svg" alt="undo" />
       </button>
    </div>
-   <div v-if="gameWon" class="game-over">Board completed!</div>
+   <div v-if="gameWon" class="game-over" v-on:click="() => end()">
+      <div>Board completed!</div>
+      <button class="btn-yes">
+         <img src="../assets/confirm.svg" alt="confirm" />
+      </button>
+   </div>
+
+   <div class="overlay" v-if="tutorial.show">
+      <div :class="'status-' + tutorial.status">
+         <div class="text-left">
+            {{ $t('tutorial.' + tutorial.status) }}
+         </div>
+         <button class="btn-yes" v-on:click="tickTutorial">
+            <img src="../assets/confirm.svg" alt="confirm" />
+         </button>
+      </div>
+   </div>
 </template>
 
 <script setup lang="ts">
@@ -47,7 +64,7 @@ const cookieManager = new CookieManager();
 let bag: number[] = [];
 const pools = reactive(new PoolsModel());
 const boardStatus = reactive(new BoardStatus());
-let showTutorial = false;
+const tutorial = reactive({ show: false, status: 0 });
 
 const start = () => {
    bag = diceManager.generateBag();
@@ -57,9 +74,20 @@ const start = () => {
    gameWon = false;
 
    if (!cookieManager.getCookie('show-tutorial')) {
-      showTutorial = true;
+      tutorial.show = true;
+      tutorial.status = 0;
       cookieManager.setCookie('show-tutorial', 'true', 7);
    }
+};
+
+const startTutorial = () => {
+   tutorial.show = true;
+   tutorial.status = 0;
+};
+
+const tickTutorial = () => {
+   tutorial.status++;
+   if (tutorial.status >= 3) tutorial.show = false;
 };
 
 const nextRound = () => {
@@ -69,7 +97,12 @@ const nextRound = () => {
 };
 
 const pick = (num: number, isPublic: boolean) => {
-   if (!boardStatus.canPick(isPublic)) return;
+   const canPick = boardStatus.canPick(isPublic);
+   if (!canPick) {
+      const lastPick = boardStatus.actions[boardStatus.actions.length - 1];
+      if (lastPick.number === num && lastPick.public === isPublic) undo();
+      return;
+   }
    const pickedDice = isPublic ? pools.public[num] : pools.private[num];
    if (!pickedDice.placed) return;
    pickedDice.active = true;
@@ -91,7 +124,11 @@ const place = (num: number) => {
    newDice.type = DiceType.Empty;
    placementManager.clearActive(pools.central);
    boardStatus.mode = 'pick';
-   if (pools.central.every((x) => x.placed)) gameWon = true;
+   if (pools.central.every((x) => x.placed)) {
+      gameWon = true;
+      return;
+   }
+   if (boardStatus.actions.length === 4) nextRound();
 };
 
 const undo = () => {
@@ -111,6 +148,8 @@ const undo = () => {
    pools.central[action.number].placed = false;
    pools.central[action.number].type = props.map[action.number];
 };
+
+const end = () => emit('onEnd');
 
 start();
 </script>

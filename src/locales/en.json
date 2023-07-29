@@ -4,5 +4,10 @@
    "easy": "Easy",
    "medium": "Medium",
    "hard": "Hard",
-   "rules-btn": "Show rules"
+   "rules-btn": "Show rules",
+   "tutorial": [
+      "Buongiorno! Are you the new apprentice? Listen, I'll explain it only once: we received only one batch of glass, consisting of 10 pieces.",
+      "Every day, ragazzo will bring one additional tile of three for you to choose from.",
+      "Your task is to lay out the stained glass. Non c'è nulla di difficile. Each glass has a thickness from 1 to 6 and one of 5 colors. You cannot place two identical tiles next to each other in terms of color or thickness. Oh, and the customer also wanted some areas to have a strictly specific tile. Tutto qui. When you finish everything, I'll come back and check."
+   ]
 }

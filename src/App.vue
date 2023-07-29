@@ -12,7 +12,7 @@
             <img alt="exit" src="./assets/exit.svg" />
          </button>
       </div>
-      <Grid :map="map.dice" v-if="map.dice.length" />
+      <Grid :map="map.dice" v-if="map.dice.length" @onEnd="() => clear()" />
 
       <div v-if="!map.dice.length" class="menu">
          <h1>{{ $t('title') }}</h1>
@@ -22,18 +22,6 @@
          <button v-on:click="pickRandom(hard)">{{ $t('hard') }}</button>
 
          <hr />
-         <button v-on:click="showRules.value = !showRules.value">{{ $t('rules-btn') }}</button>
-         <div class="rules" v-if="showRules.value">
-            <div>In the center you have a board plan with 20 slots</div>
-            <div>Each round you pick one dice from the top pool and one from the bottom</div>
-            <div>You can cancel your turn before both dice are placed</div>
-            <div>Top pool is rolled once and will be unchanged since the game start</div>
-            <div>Bottom pool changes every round</div>
-            <div>If slot an a board has color, it means you can place only dice with the same color</div>
-            <div>If slot an a board has dots, it means you can place only dice with the same amount of dots</div>
-            <div>You cant place dice near another dice with the same color or with the same amount of dots</div>
-            <div>If you cant place any dice - use lose | If your board is full - you win</div>
-         </div>
       </div>
    </div>
 </template>
@@ -44,9 +32,7 @@ import DiceManager from './components/dice.manager';
 import Grid from './components/grid.vue';
 import LocaleManager from './components/locale.manager';
 
-let showRules = reactive({ value: false });
 let map: { dice: number[] } = reactive({ dice: [] });
-let currentLocal = '';
 const localeManager = new LocaleManager();
 
 const easy = [

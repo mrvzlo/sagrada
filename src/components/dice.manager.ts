@@ -1,13 +1,15 @@
 import { DiceType } from './dice.type';
 
 export default class DiceManager {
+   private readonly DiceCount = 8;
+
    private colors = [DiceType.Red, DiceType.Blue, DiceType.Orange, DiceType.Green, DiceType.Yellow];
    private values = [DiceType.One, DiceType.Two, DiceType.Three, DiceType.Four, DiceType.Five, DiceType.Six];
 
-   public generateBag = () => {
+   public generateBag = (): number[] => {
       const diceBag = [];
       for (let i = 0; i < this.colors.length; i++)
-         for (let j = 0; j < 10; j++) {
+         for (let j = 0; j < this.DiceCount; j++) {
             const color = this.colors[i];
             const value = this.values[Math.floor(Math.random() * 6)];
             diceBag.push(value | color);
@@ -15,7 +17,7 @@ export default class DiceManager {
       return this.shuffle(diceBag);
    };
 
-   public shuffleMap = (array: number[]) => {
+   public shuffleMap = (array: number[]): number[] => {
       const shuffledColors = this.shuffle(this.colors);
       const shuffledValues = this.shuffle(this.values);
       const translator = [];
@@ -27,7 +29,7 @@ export default class DiceManager {
       return array;
    };
 
-   private shuffle = (array: number[]) => {
+   private shuffle = (array: number[]): number[] => {
       return array.slice().sort(() => Math.random() - 0.5);
    };
 }
